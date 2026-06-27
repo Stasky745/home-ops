@@ -20,4 +20,3 @@ spec:
     substituteFrom:
       - kind: ConfigMap
         name: cluster-settings
-        namespace: flux-system
