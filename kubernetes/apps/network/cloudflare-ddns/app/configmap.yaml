@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-ddns-config
+  namespace: network
+data:
+  config.yaml: |
+    auth:
+      cloudflare:
+        api_token:
+          env: CF_API_TOKEN
+
+    domains:
+      - name: wg.stasky.win
+        proxied: false
+      - name: flux-webhook.stasky.win
+        proxied: true
+
+    update_cron: "@every 5m"
+    ipv4: true
+    ipv6: false
+    delete_on_stop: false
