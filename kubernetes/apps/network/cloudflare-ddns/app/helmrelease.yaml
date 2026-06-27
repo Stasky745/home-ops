@@ -15,8 +15,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/favonia/cloudflare-ddns
-              tag: "1.16.2"
+              repository: timothyjmiller/cloudflare-ddns
+              tag: v2.1.2
             env:
               CF_API_TOKEN:
                 valueFrom:
