@@ -30,6 +30,8 @@ spec:
                 drop:
                   - ALL
     defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true

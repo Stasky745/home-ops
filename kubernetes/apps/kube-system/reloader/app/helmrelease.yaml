@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reloader
+  namespace: kube-system
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: reloader
+    namespace: kube-system
+  values:
+    reloader:
+      reloadOnCreate: true
+      syncAfterRestart: true

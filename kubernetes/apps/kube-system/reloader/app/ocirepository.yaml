@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: reloader
+  namespace: kube-system
+spec:
+  interval: 1h
+  url: oci://ghcr.io/stakater/charts/reloader
+  ref:
+    tag: "1.4.4"
