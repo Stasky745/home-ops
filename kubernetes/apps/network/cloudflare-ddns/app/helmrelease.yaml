@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: timothyjmiller/cloudflare-ddns
-              tag: v2.1.2
+              tag: 2.1.2
             env:
               CF_API_TOKEN:
                 valueFrom:
