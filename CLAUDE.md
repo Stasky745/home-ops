@@ -78,7 +78,11 @@ kubernetes/apps/
 
 ### HelmRelease pattern
 
-Prefer HelmReleases over plain manifests. A minimal example:
+**Always use HelmReleases for workloads.** Never write plain Deployment, DaemonSet, or StatefulSet manifests for applications — every app must be a HelmRelease. If no dedicated Helm chart exists for an app, use the [bjw-s app-template](https://github.com/bjw-s-labs/helm-charts) chart (`https://bjw-s.github.io/helm-charts/`, chart name `app-template`).
+
+**All versions must be pinned.** Never use `latest`, a major-only tag (`:1`), or any floating tag for container images or chart versions. Always specify an exact version (e.g. `image.tag: "1.15.0"`, `version: "3.5.0"`).
+
+A minimal example:
 
 ```yaml
 ---
