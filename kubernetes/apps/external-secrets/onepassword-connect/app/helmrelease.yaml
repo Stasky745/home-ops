@@ -15,5 +15,4 @@ spec:
         namespace: external-secrets
   values:
     connect:
-      existingSecret: onepassword-connect-credentials
       serviceType: ClusterIP
