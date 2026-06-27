@@ -4,7 +4,15 @@ kubernetesVersion: v1.36.1
 endpoint: https://<vip-ip>:6443
 allowSchedulingOnControlPlanes: true
 
+# CNI is managed by Cilium, deployed via Flux
+cniConfig:
+  name: none
+
 patches:
+  - |-
+    cluster:
+      proxy:
+        disabled: true
   - |-
     machine:
       kernel:

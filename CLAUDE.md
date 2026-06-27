@@ -42,6 +42,8 @@ Flux is managed via the **Flux Operator** pattern:
 - The FluxInstance watches `kubernetes/flux/` as its root sync path; `kubernetes/flux/apps.yaml` is the entry point that points Flux at `kubernetes/apps/`
 - To upgrade Flux: bump `instance.distribution.version` (or the tag in `flux-operator/app/ocirepository.yaml`) and commit
 
+Cilium is deployed via a `HelmRelease` in `kubernetes/apps/kube-system/cilium/`. Its `ks.yaml` uses `postBuild.substituteFrom` referencing a `cluster-settings` ConfigMap in `flux-system`. This ConfigMap is **not committed** — it is created once during bootstrap via `task kubernetes:bootstrap-cilium` and holds the `CLUSTER_VIP` value. Without it, Flux will hold the Cilium Kustomization in a pending state (this is intentional — it prevents Cilium from deploying before the Talos CNI migration is done).
+
 ## Talos Operations
 
 Node values come from `talos/nodes.env` (gitignored). Tasks are defined in `.tasks/talos.yaml` and namespaced under `talos:`.

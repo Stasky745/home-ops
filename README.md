@@ -144,6 +144,28 @@ helm install flux-operator oci://ghcr.io/controlplaneio-fluxcd/charts/flux-opera
 
 After the FluxInstance is healthy, Flux is fully GitOps-managed. To upgrade Flux, bump `instance.distribution.version` in `kubernetes/apps/flux-system/flux-instance/app/helmrelease.yaml` and commit.
 
+### 8. Migrate CNI to Cilium
+
+Edit `talos/talconfig.yaml` to add `cniConfig.name: none` and a patch for `cluster.proxy.disabled: true` (see `talconfig.yaml.example`). Then add `CLUSTER_VIP` to `talos/nodes.env`.
+
+Apply the Talos config changes and bootstrap Cilium in this exact order:
+
+```sh
+task talos:generate
+
+# Apply to first node only, then immediately bootstrap Cilium
+task talos:apply NODE=<first-node>
+task kubernetes:bootstrap-cilium
+
+# Then apply remaining nodes one at a time
+task talos:apply NODE=<second-node>
+task talos:apply NODE=<third-node>
+
+task talos:health
+```
+
+`task kubernetes:bootstrap-cilium` does three things: creates the `cluster-settings` ConfigMap (which unblocks Flux), installs Cilium via Helm (so the node has a CNI immediately), and waits for the DaemonSet to be fully ready. After this point Flux adopts the HelmRelease and manages Cilium going forward.
+
 ### Cleanup after initial bootstrap
 
 Once the FluxInstance is healthy and the operator is managing Flux, remove the legacy bootstrap files:
@@ -202,5 +224,6 @@ See [CLAUDE.md](CLAUDE.md) for conventions on structuring new applications under
 | `task talos:bootstrap` | Bootstrap the cluster (once) |
 | `task talos:kubeconfig` | Fetch kubeconfig |
 | `task talos:health` | Check cluster health |
+| `task kubernetes:bootstrap-cilium` | Bootstrap Cilium CNI (once, during CNI migration) |
 | `task talos:dashboard NODE=<n>` | Open Talos dashboard for a node |
 | `task talos:upgrade NODE=<n>` | Upgrade Talos on a node |

@@ -4,6 +4,7 @@ dotenv: ['talos/nodes.env']
 
 includes:
   talos: .tasks/talos.yaml
+  kubernetes: .tasks/kubernetes.yaml
 
 tasks:
   init:
