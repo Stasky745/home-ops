@@ -4,6 +4,7 @@ creation_rules:
       - age:
           - age16nc697vzzxu69ryr2da9awvzux0zu65xk2kq38ck23uf8ctt5v9s32vtc4
   - path_regex: kubernetes/.*\.sops\.yaml$
+    encrypted_regex: ^(data|stringData)$
     key_groups:
       - age:
           - age16nc697vzzxu69ryr2da9awvzux0zu65xk2kq38ck23uf8ctt5v9s32vtc4
