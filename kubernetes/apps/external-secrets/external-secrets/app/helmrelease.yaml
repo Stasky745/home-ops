@@ -5,13 +5,10 @@ metadata:
   namespace: external-secrets
 spec:
   interval: 1h
-  chart:
-    spec:
-      chart: external-secrets
-      version: "0.10.x"
-      sourceRef:
-        kind: HelmRepository
-        name: external-secrets
-        namespace: external-secrets
+  chartRef:
+    kind: OCIRepository
+    name: external-secrets
   values:
     installCRDs: true
+    replicaCount: 1
+    leaderElect: true
