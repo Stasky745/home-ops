@@ -20,6 +20,6 @@ spec:
         httpPort: 80
         imageRepository: ghcr.io/1password/connect-api
         serviceMonitor:
-          enabled: true
+          enabled: false
       sync:
         imageRepository: ghcr.io/1password/connect-sync
