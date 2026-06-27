@@ -3,7 +3,7 @@ version: "3"
 vars:
   TALOSCONFIG: talos/clusterconfig/talosconfig
   CLUSTER_NAME:
-    sh: echo $CLUSTER_NAME
+    sh: grep '^clusterName:' talos/talconfig.yaml | awk '{print $2}'
   NODES:
     sh: echo $NODES
 
@@ -67,7 +67,9 @@ tasks:
   health:
     desc: Check cluster health across all nodes
     cmds:
-      - talosctl health --nodes $ALL_NODE_IPS --talosconfig {{.TALOSCONFIG}}
+      - talosctl health
+        --control-plane-nodes $ALL_NODE_IPS
+        --talosconfig {{.TALOSCONFIG}}
 
   dashboard:
     desc: "Open Talos dashboard for a node. Usage: task talos:dashboard NODE=<hostname>"
@@ -78,6 +80,16 @@ tasks:
         sh: printenv NODE_{{.NODE | upper}}
     cmds:
       - talosctl dashboard --nodes {{.NODE_IP}} --talosconfig {{.TALOSCONFIG}}
+
+  reboot:
+    desc: "Reboot a node. Usage: task talos:reboot NODE=<hostname>"
+    requires:
+      vars: [NODE]
+    vars:
+      NODE_IP:
+        sh: printenv NODE_{{.NODE | upper}}
+    cmds:
+      - talosctl reboot --nodes {{.NODE_IP}} --talosconfig {{.TALOSCONFIG}}
 
   upgrade:
     desc: "Upgrade Talos on a node. Usage: task talos:upgrade NODE=<hostname>"
