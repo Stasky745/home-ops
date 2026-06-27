@@ -5,14 +5,10 @@ metadata:
   namespace: network
 spec:
   interval: 1h
-  chart:
-    spec:
-      chart: app-template
-      version: "5.0.1"
-      sourceRef:
-        kind: HelmRepository
-        name: bjw-s
-        namespace: network
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: network
   values:
     controllers:
       cloudflare-ddns:

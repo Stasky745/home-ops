@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: app-template
+  namespace: network
+spec:
+  interval: 1h
+  url: oci://ghcr.io/bjw-s/helm-charts/app-template
+  ref:
+    tag: "5.0.1"

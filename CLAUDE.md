@@ -82,6 +82,18 @@ kubernetes/apps/
 
 **All versions must be pinned.** Never use `latest`, a major-only tag (`:1`), or any floating tag for container images or chart versions. Always specify an exact version (e.g. `image.tag: "1.15.0"`, `version: "3.5.0"`).
 
+**Prefer OCI over HTTPS for Helm chart sources.** Use `OCIRepository` (with `chartRef` in the HelmRelease) instead of `HelmRepository` when the chart is available as an OCI artifact. Check the chart's GitHub/docs for an OCI URL before falling back to an HTTPS repo.
+
+**Every `ks.yaml` that deploys a HelmRelease must include a `healthChecks` entry** referencing that HelmRelease. This ensures the Kustomization only reports ready once the Helm deployment itself is healthy, not just once the manifests are applied:
+
+```yaml
+healthChecks:
+  - apiVersion: helm.toolkit.fluxcd.io/v2
+    kind: HelmRelease
+    name: <app-name>
+    namespace: <namespace>
+```
+
 A minimal example:
 
 ```yaml
