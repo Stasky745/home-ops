@@ -13,6 +13,8 @@
             talosctl
             talhelper
             kubectl
+            kubernetes-helm
+            fluxcd
             sops
             age
             claude-code
