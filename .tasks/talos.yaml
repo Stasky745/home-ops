@@ -1,0 +1,91 @@
+version: "3"
+
+vars:
+  TALOSCONFIG: talos/clusterconfig/talosconfig
+  CLUSTER_NAME:
+    sh: echo $CLUSTER_NAME
+  NODES:
+    sh: echo $NODES
+
+tasks:
+  generate:
+    desc: Generate Talos node configs from talconfig.yaml
+    cmds:
+      - talhelper genconfig
+        --config talos/talconfig.yaml
+        --secret-file talos/talsecret.sops.yaml
+        --out-dir talos/clusterconfig
+
+  apply:
+    desc: "Apply config to a running node. Usage: task talos:apply NODE=<hostname>"
+    requires:
+      vars: [NODE]
+    vars:
+      NODE_IP:
+        sh: printenv NODE_{{.NODE | upper}}
+    cmds:
+      - talosctl apply-config
+        --nodes {{.NODE_IP}}
+        --file talos/clusterconfig/{{.CLUSTER_NAME}}-{{.NODE}}.yaml
+        --talosconfig {{.TALOSCONFIG}}
+
+  apply:maintenance:
+    desc: "Apply config to a node in maintenance mode. Usage: task talos:apply:maintenance NODE=<hostname>"
+    requires:
+      vars: [NODE]
+    vars:
+      NODE_IP:
+        sh: printenv NODE_{{.NODE | upper}}
+    cmds:
+      - talosctl apply-config
+        --nodes {{.NODE_IP}}
+        --file talos/clusterconfig/{{.CLUSTER_NAME}}-{{.NODE}}.yaml
+        --insecure
+
+  apply:all:
+    desc: Apply config to all nodes defined in talos/nodes.env
+    cmds:
+      - for:
+          var: NODES
+          split: ' '
+        task: apply
+        vars: { NODE: '{{.ITEM}}' }
+
+  bootstrap:
+    desc: Bootstrap the cluster (run once after first apply on all nodes)
+    cmds:
+      - talosctl bootstrap --nodes $BOOTSTRAP_NODE_IP --talosconfig {{.TALOSCONFIG}}
+
+  kubeconfig:
+    desc: Fetch kubeconfig into talos/clusterconfig/kubeconfig
+    cmds:
+      - talosctl kubeconfig talos/clusterconfig/kubeconfig
+        --nodes $BOOTSTRAP_NODE_IP
+        --talosconfig {{.TALOSCONFIG}}
+        --force
+
+  health:
+    desc: Check cluster health across all nodes
+    cmds:
+      - talosctl health --nodes $ALL_NODE_IPS --talosconfig {{.TALOSCONFIG}}
+
+  dashboard:
+    desc: "Open Talos dashboard for a node. Usage: task talos:dashboard NODE=<hostname>"
+    requires:
+      vars: [NODE]
+    vars:
+      NODE_IP:
+        sh: printenv NODE_{{.NODE | upper}}
+    cmds:
+      - talosctl dashboard --nodes {{.NODE_IP}} --talosconfig {{.TALOSCONFIG}}
+
+  upgrade:
+    desc: "Upgrade Talos on a node. Usage: task talos:upgrade NODE=<hostname>"
+    requires:
+      vars: [NODE]
+    cmds:
+      - talhelper gencommand upgrade
+        --config talos/talconfig.yaml
+        --secret-file talos/talsecret.sops.yaml
+        --talosconfig {{.TALOSCONFIG}}
+        | grep {{.NODE}} | sh

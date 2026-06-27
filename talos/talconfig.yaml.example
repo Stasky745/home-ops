@@ -1,0 +1,79 @@
+clusterName: <cluster-name>
+talosVersion: v1.13.4
+kubernetesVersion: v1.36.1
+endpoint: https://<vip-ip>:6443
+allowSchedulingOnControlPlanes: true
+
+patches:
+  - |-
+    machine:
+      kernel:
+        modules:
+          - name: iscsi_tcp
+          - name: dm_crypt
+      kubelet:
+        extraMounts:
+          - destination: /var/lib/longhorn
+            type: bind
+            source: /var/lib/longhorn
+            options:
+              - bind
+              - rshared
+              - rw
+      sysctls:
+        vm.max_map_count: "262144"
+      network:
+        nameservers:
+          - <nameserver-ip>
+      time:
+        servers:
+          - <ntp-server-ip>
+
+nodes:
+  - hostname: <node-1-hostname>
+    ipAddress: <node-1-ip>
+    controlPlane: true
+    installDisk: /dev/<disk>
+    talosImageURL: factory.talos.dev/installer/<schematic-id>
+    networkInterfaces:
+      - interface: <interface-name>
+        dhcp: false
+        addresses:
+          - <node-1-ip>/<prefix-length>
+        routes:
+          - network: 0.0.0.0/0
+            gateway: <gateway-ip>
+        vip:
+          ip: <vip-ip>
+
+  - hostname: <node-2-hostname>
+    ipAddress: <node-2-ip>
+    controlPlane: true
+    installDisk: /dev/<disk>
+    talosImageURL: factory.talos.dev/installer/<schematic-id>
+    networkInterfaces:
+      - interface: <interface-name>
+        dhcp: false
+        addresses:
+          - <node-2-ip>/<prefix-length>
+        routes:
+          - network: 0.0.0.0/0
+            gateway: <gateway-ip>
+        vip:
+          ip: <vip-ip>
+
+  - hostname: <node-3-hostname>
+    ipAddress: <node-3-ip>
+    controlPlane: true
+    installDisk: /dev/<disk>
+    talosImageURL: factory.talos.dev/installer/<schematic-id>
+    networkInterfaces:
+      - interface: <interface-name>
+        dhcp: false
+        addresses:
+          - <node-3-ip>/<prefix-length>
+        routes:
+          - network: 0.0.0.0/0
+            gateway: <gateway-ip>
+        vip:
+          ip: <vip-ip>

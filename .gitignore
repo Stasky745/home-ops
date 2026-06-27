@@ -1,0 +1,13 @@
+# Secrets
+age.key
+
+# Large files
+*.iso
+
+# Talos generated configs (contain secrets) and kubeconfig
+talos/clusterconfig/
+
+# Real talconfig and nodes env (contain network topology)
+# Copy *.example counterparts and fill in your values
+talos/talconfig.yaml
+talos/nodes.env

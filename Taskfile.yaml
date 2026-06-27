@@ -1,0 +1,14 @@
+version: "3"
+
+dotenv: ['talos/nodes.env']
+
+includes:
+  talos: .tasks/talos.yaml
+
+tasks:
+  init:
+    desc: Install all tools from flake.nix into the nix profile (run once after container (re)build)
+    cmds:
+      - nix profile add /workspace#
+      - direnv allow /workspace
+      - cp /root/.claude/backups/.claude.json.backup.1782489431743 /root/.claude.json

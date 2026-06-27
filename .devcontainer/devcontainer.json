@@ -1,0 +1,27 @@
+{
+  "name": "Talos Cluster",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "remoteUser": "root",
+  "runArgs": [
+    "--name",
+    "talos-cluster",
+    "--volume",
+    "${localEnv:HOME}/.claude.stasky:/root/.claude:cached",
+    "--volume",
+    "${localEnv:HOME}/.claude.stasky:/root/.claude:cached"
+  ],
+  "postStartCommand": "nix profile install /workspace# && direnv allow /workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.vscode-yaml",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "task.vscode-task"
+      ]
+    }
+  }
+}
