@@ -11,3 +11,7 @@ talos/clusterconfig/
 # Copy *.example counterparts and fill in your values
 talos/talconfig.yaml
 talos/nodes.env
+
+# Cluster-wide settings (personal info, not committed)
+# Copy kubernetes/cluster.env.example and fill in your values
+kubernetes/cluster.env

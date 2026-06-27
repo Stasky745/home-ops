@@ -27,3 +27,8 @@ spec:
         path: kubernetes/flux
         pullSecret: flux-system
         interval: 1h
+      kustomize:
+        decryption:
+          provider: sops
+          secretRef:
+            name: sops-age

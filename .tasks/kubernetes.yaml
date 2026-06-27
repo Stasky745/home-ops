@@ -11,6 +11,7 @@ tasks:
         kubectl create configmap cluster-settings \
           --namespace flux-system \
           --from-literal=CLUSTER_VIP=${CLUSTER_VIP} \
+          --from-literal=ACME_EMAIL=${ACME_EMAIL} \
           --dry-run=client -o yaml | kubectl apply -f -
       - helm repo add cilium https://helm.cilium.io/ 2>/dev/null || true
       - helm repo update cilium
@@ -31,3 +32,12 @@ tasks:
           --set "securityContext.capabilities.ciliumAgent={CHOWN,KILL,NET_ADMIN,NET_RAW,IPC_LOCK,SYS_ADMIN,SYS_RESOURCE,DAC_OVERRIDE,FOWNER,SETGID,SETUID}" \
           --set "securityContext.capabilities.cleanCiliumState={NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}"
       - kubectl rollout status daemonset/cilium -n kube-system --timeout=300s
+
+  bootstrap-sops:
+    desc: "Seed the SOPS age private key into flux-system — run once per cluster"
+    cmds:
+      - |
+        kubectl create secret generic sops-age \
+          --namespace flux-system \
+          --from-file=age.agekey=${SOPS_AGE_KEY_FILE} \
+          --dry-run=client -o yaml | kubectl apply -f -
