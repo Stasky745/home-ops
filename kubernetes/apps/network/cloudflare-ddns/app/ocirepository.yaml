@@ -5,6 +5,9 @@ metadata:
   namespace: network
 spec:
   interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
   url: oci://ghcr.io/bjw-s/helm-charts/app-template
   ref:
     tag: "5.0.1"
