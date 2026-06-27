@@ -67,9 +67,7 @@ tasks:
   health:
     desc: Check cluster health across all nodes
     cmds:
-      - talosctl health
-        --control-plane-nodes $ALL_NODE_IPS
-        --talosconfig {{.TALOSCONFIG}}
+      - talosctl health -n $BOOTSTRAP_NODE_IP --talosconfig {{.TALOSCONFIG}}
 
   dashboard:
     desc: "Open Talos dashboard for a node. Usage: task talos:dashboard NODE=<hostname>"

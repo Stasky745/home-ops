@@ -41,7 +41,10 @@ spec:
     kubeProxyReplacement: true
     k8sServiceHost: "${CLUSTER_VIP}"
     k8sServicePort: "6443"
+    # Gateway API handled by Envoy Gateway, not Cilium
     gatewayAPI:
+      enabled: false
+    l2announcements:
       enabled: true
     hubble:
       enabled: true
