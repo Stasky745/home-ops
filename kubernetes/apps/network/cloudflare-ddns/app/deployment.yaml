@@ -20,7 +20,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: cloudflare-ddns
-          image: ghcr.io/favonia/cloudflare-ddns:1
+          image: timothyjmiller/cloudflare-ddns:v2.1.2
           env:
             - name: CF_API_TOKEN
               valueFrom:
