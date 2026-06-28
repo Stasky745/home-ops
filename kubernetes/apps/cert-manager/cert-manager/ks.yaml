@@ -35,6 +35,7 @@ spec:
   dependsOn:
     - name: cert-manager
     - name: external-secrets-config
+  retryInterval: 1m
   postBuild:
     substituteFrom:
       - kind: ConfigMap
