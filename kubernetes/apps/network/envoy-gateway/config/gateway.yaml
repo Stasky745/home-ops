@@ -35,6 +35,8 @@ kind: Gateway
 metadata:
   name: external
   namespace: network
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ipv4.stasky.win
 spec:
   gatewayClassName: envoy
   listeners:

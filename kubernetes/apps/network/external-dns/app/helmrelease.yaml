@@ -21,7 +21,6 @@ spec:
     extraArgs:
       - --gateway-name=external
       - --gateway-namespace=network
-      - --target=ipv4.stasky.win
       - --cloudflare-proxied
     domainFilters:
       - stasky.win

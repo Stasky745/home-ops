@@ -82,6 +82,18 @@ kubernetes/apps/
 
 **All versions must be pinned.** Never use `latest`, a major-only tag (`:1`), or any floating tag for container images or chart versions. Always specify an exact version (e.g. `image.tag: "1.15.0"`, `version: "3.5.0"`).
 
+**Every HTTPRoute attached to the `external` gateway must include the Cloudflare proxy annotation** to explicitly declare whether Cloudflare should proxy the traffic:
+
+```yaml
+metadata:
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"   # orange cloud — proxied
+    # or
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"  # grey cloud — DNS only
+```
+
+Use `"true"` for HTTP/HTTPS services. Use `"false"` for UDP services like WireGuard (which can't be proxied). HTTPRoutes on the `internal` gateway do not need this annotation — they are covered by the `*.stasky.win` wildcard and are never managed by external-dns.
+
 **Always split HelmRepository and HelmRelease into separate files** (`helmrepository.yaml` and `helmrelease.yaml`). Never combine them in a single file with `---`.
 
 **Prefer OCI over HTTPS for Helm chart sources.** Use `OCIRepository` (with `chartRef` in the HelmRelease) instead of `HelmRepository` when the chart is available as an OCI artifact. Check the chart's GitHub/docs for an OCI URL before falling back to an HTTPS repo.
