@@ -46,6 +46,9 @@ spec:
       enabled: false
     l2announcements:
       enabled: true
+    k8sClientRateLimit:
+      qps: 5
+      burst: 10
     hubble:
       enabled: true
       relay:
