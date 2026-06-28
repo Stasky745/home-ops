@@ -11,7 +11,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: external-secrets-clustersecretstore
-      namespace: flux-system
+    - name: envoy-gateway
   path: ./kubernetes/apps/flux-system/webhooks/app
   prune: true
   sourceRef:
@@ -19,4 +19,18 @@ spec:
     name: flux-system
   wait: true
   interval: 30m
+  retryInterval: 1m
   timeout: 5m
+  healthChecks:
+    - apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      name: github-webhook-secret
+      namespace: flux-system
+    - apiVersion: notification.toolkit.fluxcd.io/v1
+      kind: Receiver
+      name: github-receiver
+      namespace: flux-system
+    - apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      name: github-webhook
+      namespace: flux-system
