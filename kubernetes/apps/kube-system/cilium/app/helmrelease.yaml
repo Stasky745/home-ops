@@ -40,6 +40,7 @@ spec:
     autoDirectNodeRoutes: true
     ipv4NativeRoutingCIDR: 10.244.0.0/22
     enableRuntimeDeviceDetection: true
+    devices: ["eno1"]
     extraConfig:
       direct-routing-device: "eno1"
     bpf:
