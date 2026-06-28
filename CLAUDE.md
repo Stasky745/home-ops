@@ -179,7 +179,7 @@ kubernetes/apps/
 3. Add the app's `ks.yaml` to the namespace's `kustomization.yaml` resources list
 4. Provide the commands for the user to apply; do not run them directly
 
-The `cluster-apps` Kustomization in `kubernetes/flux/apps.yaml` already watches `./kubernetes/apps` — no additional Flux Kustomization wiring is needed at the top level. Use `dependsOn` in `ks.yaml` when an app must wait for another (e.g. CRDs before the app that uses them). Every kustomization with `dependsOn` must also set `retryInterval: 1m` so it re-checks its dependency every minute instead of waiting for the full `interval`.
+The `cluster-apps` Kustomization in `kubernetes/flux/apps.yaml` already watches `./kubernetes/apps` — no additional Flux Kustomization wiring is needed at the top level. Use `dependsOn` in `ks.yaml` when an app must wait for another (e.g. CRDs before the app that uses them). All kustomizations must set `retryInterval: 1m` so any transient failure (missing dependency, CRD not yet registered, ConfigMap not found) recovers within a minute instead of waiting for the full `interval`.
 
 ## Adding New Tasks
 
