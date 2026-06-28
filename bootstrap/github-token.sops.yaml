@@ -1,0 +1,24 @@
+apiVersion: v1
+data:
+    password: ENC[AES256_GCM,data:yBskyZ+rmNHq3J7NmcCpIONc1mshwptZvB/vv+ceQycfFJxjNYviaseGvcrY1QOyRasIBqF9hn3SkfegFFt7NxWKv1RC6SDQ8djW9/2cZL8Uvyt7azrh8PhfyAJsp92U+1JzSw+xNMaI1QDkeJ0Gm3uVglvjiRyqTiPNWw==,iv:wnaElzgKBHeDGfE/YMWbXQlSb2qgK5ngn1CIquXtoHM=,tag:vztrN5oq/bECf4Cji6fYcg==,type:str]
+    username: ENC[AES256_GCM,data:agtCrA==,iv:qaRqaD96SHEtCKhEt8rBCIho773uVU/+93VpGQB2jFM=,tag:9JFOq/lJYMDbFcvbSqnAwQ==,type:str]
+kind: Secret
+metadata:
+    creationTimestamp: null
+    name: flux-system
+    namespace: flux-system
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBucmxRcXRqRGdUeUlPQ2li
+            KzZWQ3FBQWVhODhGblBBbVArQmpBb3ZVa1hzCnVGTms3aVBlNmtnaFR4eHc5Z1pi
+            VjJXYnFxVmhnV0pDUFpJRkM2ZVkwY00KLS0tIDJINjAzbHI2NlBtbkozSUxiZGtZ
+            bUJQN09zNEpFWDJremF1azZOUDgxYVkKG7AbAg1egRLRFq5TeRamQ+ipY023Ia/O
+            W9vD6VxD3Nmdr2L8bxO5vcdPgr4zLAiDNoaxMK5qz9++uNXWETNI5A==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age16nc697vzzxu69ryr2da9awvzux0zu65xk2kq38ck23uf8ctt5v9s32vtc4
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-06-28T17:39:51Z"
+    mac: ENC[AES256_GCM,data:1Lp57aG+YZffu2iBrewPGKmIMKpf7v7ebh6IYaNEIPkRLbLFN19EOjMfdBBT6X9coQdDLcpB7X6XLL/wSf5Y2HmD4JBRFqTdT8lZzHJCflzuvtquoPdbpT1LNWOghn/cd2WO1JHDaNaYYQ7rvn7j7KwdNvWWzjCOpzc9h72RD4M=,iv:sqqn/5/tuTrCoTZBKIPIZG8CLhSJvogMx2RB9D0JlX4=,tag:lAav7Ikh5JAt9hOGl/R6kg==,type:str]
+    version: 3.13.1

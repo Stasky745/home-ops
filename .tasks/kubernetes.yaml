@@ -104,12 +104,15 @@ tasks:
         echo "Then run: task kubernetes:bootstrap-flux-operator"
 
   bootstrap-flux-operator:
-    desc: "Install Flux Operator and wire it to the git repo (run after creating flux-system secret)"
+    desc: "Install Flux Operator and wire it to the git repo (run after bootstrap-sops)"
     cmds:
+      - kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
+      - sops -d bootstrap/github-token.sops.yaml | kubectl apply -f -
       - |
         helm upgrade --install flux-operator \
           oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator \
           --namespace flux-system \
+          --create-namespace \
           --version {{.FLUX_OPERATOR_VERSION}} \
           --set serviceMonitor.create=false
       - kubectl rollout status deployment/flux-operator -n flux-system --timeout=120s
