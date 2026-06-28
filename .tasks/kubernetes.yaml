@@ -2,40 +2,147 @@ version: "3"
 
 vars:
   CILIUM_VERSION: 1.19.5
+  FLUX_OPERATOR_VERSION: 0.52.0
 
 tasks:
   bootstrap-cilium:
-    desc: "Bootstrap Cilium CNI — run once after applying cni:none to the first Talos node"
+    desc: "Bootstrap Cilium CNI — run once after talos bootstrap, before Flux"
     cmds:
       - |
-        kubectl create configmap cluster-settings \
-          --namespace flux-system \
-          --from-literal=CLUSTER_VIP=${CLUSTER_VIP} \
-          --from-literal=ACME_EMAIL=${ACME_EMAIL} \
-          --dry-run=client -o yaml | kubectl apply -f -
-      - helm repo add cilium https://helm.cilium.io/ 2>/dev/null || true
-      - helm repo update cilium
+        cat > /tmp/cilium-bootstrap-values.yaml << 'EOF'
+        cgroup:
+          autoMount:
+            enabled: false
+          hostRoot: /sys/fs/cgroup
+        securityContext:
+          capabilities:
+            ciliumAgent:
+              - CHOWN
+              - KILL
+              - NET_ADMIN
+              - NET_RAW
+              - IPC_LOCK
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - DAC_OVERRIDE
+              - FOWNER
+              - SETGID
+              - SETUID
+            cleanCiliumState:
+              - NET_ADMIN
+              - SYS_ADMIN
+              - SYS_RESOURCE
+        kubeProxyReplacement: true
+        kubeProxyReplacementHealthzBindAddr: "0.0.0.0:10256"
+        k8sServiceHost: 127.0.0.1
+        k8sServicePort: "7445"
+        routingMode: native
+        autoDirectNodeRoutes: true
+        ipv4NativeRoutingCIDR: 10.244.0.0/22
+        enableRuntimeDeviceDetection: true
+        extraConfig:
+          direct-routing-device: "eno1"
+        bpf:
+          masquerade: true
+          preallocateMaps: true
+        bpfClockProbe: true
+        endpointRoutes:
+          enabled: true
+        ipam:
+          mode: kubernetes
+        gatewayAPI:
+          enabled: false
+        l2announcements:
+          enabled: true
+        k8sClientRateLimit:
+          qps: 5
+          burst: 10
+        loadBalancer:
+          algorithm: maglev
+        socketLB:
+          enabled: true
+          hostNamespaceOnly: true
+        localRedirectPolicy: true
+        pmtuDiscovery:
+          enabled: true
+        bandwidthManager:
+          enabled: true
+          bbr: true
+        enableIPv4BIGTCP: true
+        operator:
+          replicas: 1
+          rollOutPods: true
+        rollOutCiliumPods: true
+        hubble:
+          enabled: true
+          relay:
+            enabled: true
+          ui:
+            enabled: true
+        EOF
       - |
-        helm upgrade --install cilium cilium/cilium \
+        helm upgrade --install cilium oci://quay.io/cilium/charts/cilium \
           --namespace kube-system \
+          --create-namespace \
           --version {{.CILIUM_VERSION}} \
-          --set kubeProxyReplacement=true \
-          --set k8sServiceHost=${CLUSTER_VIP} \
-          --set k8sServicePort=6443 \
-          --set gatewayAPI.enabled=false \
-          --set l2announcements.enabled=true \
-          --set hubble.enabled=true \
-          --set hubble.relay.enabled=true \
-          --set hubble.ui.enabled=true \
-          --set cgroup.autoMount.enabled=false \
-          --set cgroup.hostRoot=/sys/fs/cgroup \
-          --set "securityContext.capabilities.ciliumAgent={CHOWN,KILL,NET_ADMIN,NET_RAW,IPC_LOCK,SYS_ADMIN,SYS_RESOURCE,DAC_OVERRIDE,FOWNER,SETGID,SETUID}" \
-          --set "securityContext.capabilities.cleanCiliumState={NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}"
+          -f /tmp/cilium-bootstrap-values.yaml
+      - rm -f /tmp/cilium-bootstrap-values.yaml
       - kubectl rollout status daemonset/cilium -n kube-system --timeout=300s
+
+  bootstrap-flux:
+    desc: "Bootstrap Flux Operator and instance — run once after Cilium is healthy"
+    cmds:
+      - kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
+      - task: bootstrap-sops
+      - |
+        echo "Create the GitHub token secret for Flux to pull from the repo:"
+        echo "  kubectl create secret generic flux-system \\"
+        echo "    --namespace flux-system \\"
+        echo "    --from-literal=username=git \\"
+        echo "    --from-literal=password=<YOUR_GITHUB_TOKEN>"
+        echo ""
+        echo "Then run: task kubernetes:bootstrap-flux-operator"
+
+  bootstrap-flux-operator:
+    desc: "Install Flux Operator and wire it to the git repo (run after creating flux-system secret)"
+    cmds:
+      - |
+        helm upgrade --install flux-operator \
+          oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator \
+          --namespace flux-system \
+          --version {{.FLUX_OPERATOR_VERSION}} \
+          --set serviceMonitor.create=false
+      - kubectl rollout status deployment/flux-operator -n flux-system --timeout=120s
+      - |
+        helm upgrade --install flux-instance \
+          oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance \
+          --namespace flux-system \
+          --version {{.FLUX_OPERATOR_VERSION}} \
+          --values - << 'EOF'
+        instance:
+          components:
+            - source-controller
+            - kustomize-controller
+            - helm-controller
+            - notification-controller
+          cluster:
+            type: kubernetes
+            domain: cluster.local
+            networkPolicy: false
+          sync:
+            kind: GitRepository
+            name: flux-system
+            url: https://github.com/Stasky745/home-ops.git
+            ref: refs/heads/main
+            path: kubernetes/flux
+            pullSecret: flux-system
+            interval: 1h
+        EOF
 
   bootstrap-sops:
     desc: "Seed the SOPS age private key into flux-system — run once per cluster"
     cmds:
+      - kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
       - |
         kubectl create secret generic sops-age \
           --namespace flux-system \

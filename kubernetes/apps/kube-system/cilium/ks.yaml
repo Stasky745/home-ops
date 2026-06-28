@@ -26,24 +26,3 @@ spec:
       kind: OCIRepository
       name: cilium
       namespace: kube-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: cilium-config
-  namespace: flux-system
-spec:
-  targetNamespace: kube-system
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: cilium
-  dependsOn:
-    - name: cilium
-  path: ./kubernetes/apps/kube-system/cilium/config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
