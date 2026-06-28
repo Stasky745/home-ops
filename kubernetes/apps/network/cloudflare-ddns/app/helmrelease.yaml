@@ -31,7 +31,7 @@ spec:
               DELETE_ON_FAILURE: false
               RECORD_COMMENT: CF_DDNS
               MANAGED_RECORDS_COMMENT_REGEX: CF_DDNS
-              PROXIED: true
+              PROXIED: "!is(wg.stasky.win)"
 
             securityContext:
               allowPrivilegeEscalation: false
