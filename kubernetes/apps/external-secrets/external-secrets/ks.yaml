@@ -25,7 +25,7 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: external-secrets-config
+  name: external-secrets-clustersecretstore
   namespace: flux-system
 spec:
   targetNamespace: external-secrets
