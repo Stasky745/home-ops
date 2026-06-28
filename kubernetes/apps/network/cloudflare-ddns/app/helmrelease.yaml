@@ -19,6 +19,8 @@ spec:
             image:
               repository: timothyjmiller/cloudflare-ddns
               tag: 2.1.2
+
+            # https://github.com/timothymiller/cloudflare-ddns
             env:
               CLOUDFLARE_API_TOKEN:
                 valueFrom:
@@ -29,6 +31,7 @@ spec:
               DELETE_ON_FAILURE: false
               RECORD_COMMENT: CF_DDNS
               MANAGED_RECORDS_COMMENT_REGEX: CF_DDNS
+              PROXIED: true
 
             securityContext:
               allowPrivilegeEscalation: false
