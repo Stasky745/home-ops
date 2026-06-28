@@ -34,6 +34,7 @@ spec:
       app.kubernetes.io/name: envoy-gateway
   dependsOn:
     - name: envoy-gateway
+    - name: cert-manager-config
   path: ./kubernetes/apps/network/envoy-gateway/config
   prune: true
   sourceRef:
@@ -42,3 +43,8 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 5m
+  healthChecks:
+    - apiVersion: cert-manager.io/v1
+      kind: Certificate
+      name: stasky-win-wildcard
+      namespace: network
