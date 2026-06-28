@@ -18,7 +18,7 @@ spec:
               repository: timothyjmiller/cloudflare-ddns
               tag: 2.1.2
             env:
-              CF_API_TOKEN:
+              CLOUDFLARE_API_TOKEN:
                 valueFrom:
                   secretKeyRef:
                     name: cloudflare-ddns-token

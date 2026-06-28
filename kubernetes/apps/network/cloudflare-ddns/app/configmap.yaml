@@ -8,7 +8,7 @@ data:
     auth:
       cloudflare:
         api_token:
-          env: CF_API_TOKEN
+          env: CLOUDFLARE_API_TOKEN
 
     domains:
       - name: wg.stasky.win
