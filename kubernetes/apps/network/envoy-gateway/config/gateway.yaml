@@ -12,6 +12,8 @@ metadata:
   namespace: network
 spec:
   gatewayClassName: envoy
+  addresses:
+    - value: 192.168.42.100
   listeners:
     - name: http
       protocol: HTTP
@@ -39,6 +41,8 @@ metadata:
     external-dns.alpha.kubernetes.io/target: ipv4.stasky.win
 spec:
   gatewayClassName: envoy
+  addresses:
+    - value: 192.168.42.101
   listeners:
     - name: http
       protocol: HTTP
