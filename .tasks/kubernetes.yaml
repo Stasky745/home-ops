@@ -90,18 +90,10 @@ tasks:
       - kubectl rollout status daemonset/cilium -n kube-system --timeout=300s
 
   bootstrap-flux:
-    desc: "Bootstrap Flux Operator and instance — run once after Cilium is healthy"
+    desc: "Bootstrap SOPS key, GitHub token secret, Flux Operator and Instance — run once after Cilium is healthy"
     cmds:
-      - kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
       - task: bootstrap-sops
-      - |
-        echo "Create the GitHub token secret for Flux to pull from the repo:"
-        echo "  kubectl create secret generic flux-system \\"
-        echo "    --namespace flux-system \\"
-        echo "    --from-literal=username=git \\"
-        echo "    --from-literal=password=<YOUR_GITHUB_TOKEN>"
-        echo ""
-        echo "Then run: task kubernetes:bootstrap-flux-operator"
+      - task: bootstrap-flux-operator
 
   bootstrap-flux-operator:
     desc: "Install Flux Operator and wire it to the git repo (run after bootstrap-sops)"
