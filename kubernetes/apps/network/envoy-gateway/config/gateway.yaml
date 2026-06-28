@@ -1,9 +1,36 @@
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
   name: envoy
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: internal
+  namespace: network
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.42.100"
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: external
+  namespace: network
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.42.101"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -12,8 +39,11 @@ metadata:
   namespace: network
 spec:
   gatewayClassName: envoy
-  addresses:
-    - value: 192.168.42.100
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: internal
   listeners:
     - name: http
       protocol: HTTP
@@ -41,8 +71,11 @@ metadata:
     external-dns.alpha.kubernetes.io/target: ipv4.stasky.win
 spec:
   gatewayClassName: envoy
-  addresses:
-    - value: 192.168.42.101
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: external
   listeners:
     - name: http
       protocol: HTTP
