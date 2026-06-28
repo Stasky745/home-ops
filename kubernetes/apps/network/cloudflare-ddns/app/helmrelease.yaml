@@ -27,11 +27,11 @@ spec:
                   secretKeyRef:
                     name: cloudflare-ddns-token
                     key: api-token
-              IP4_DOMAINS: flux-webhook.stasky.win,wg.stasky.win
+              IP4_DOMAINS: ipv4.stasky.win,wg.stasky.win
               DELETE_ON_FAILURE: false
               RECORD_COMMENT: CF_DDNS
               MANAGED_RECORDS_COMMENT_REGEX: CF_DDNS
-              PROXIED: "!is(wg.stasky.win)"
+              PROXIED: "false"
 
             securityContext:
               allowPrivilegeEscalation: false
