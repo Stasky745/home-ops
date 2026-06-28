@@ -16,6 +16,7 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyService:
+        externalTrafficPolicy: Cluster
         annotations:
           io.cilium/lb-ipam-ips: "192.168.42.100"
 ---
@@ -29,6 +30,7 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyService:
+        externalTrafficPolicy: Cluster
         annotations:
           io.cilium/lb-ipam-ips: "192.168.42.101"
 ---
