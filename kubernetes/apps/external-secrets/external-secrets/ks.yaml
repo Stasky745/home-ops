@@ -47,4 +47,4 @@ spec:
     - apiVersion: external-secrets.io/v1
       kind: ClusterSecretStore
       name: onepassword
-      namespace: external-secrets
+      namespace: ""
