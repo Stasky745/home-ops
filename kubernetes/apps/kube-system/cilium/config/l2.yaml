@@ -14,6 +14,8 @@ metadata:
   name: l2-policy
 spec:
   loadBalancerIPs: true
+  serviceSelector:
+    matchLabels: {}
   nodeSelector:
     matchLabels:
       kubernetes.io/os: linux
