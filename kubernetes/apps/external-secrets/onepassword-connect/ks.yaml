@@ -25,3 +25,7 @@ spec:
       kind: HelmRelease
       name: onepassword-connect
       namespace: external-secrets
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: OCIRepository
+      name: app-template
+      namespace: external-secrets

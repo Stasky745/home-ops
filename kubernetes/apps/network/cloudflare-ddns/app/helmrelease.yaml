@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/refs/heads/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -23,6 +25,11 @@ spec:
                   secretKeyRef:
                     name: cloudflare-ddns-token
                     key: api-token
+              IP4_DOMAINS: flux-webhook.stasky.win,wg.stasky.win
+              DELETE_ON_FAILURE: false
+              RECORD_COMMENT: CF_DDNS
+              MANAGED_RECORDS_COMMENT_REGEX: CF_DDNS
+
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -37,11 +44,3 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
-    persistence:
-      config:
-        type: configMap
-        name: cloudflare-ddns-config
-        globalMounts:
-          - path: /config.yaml
-            subPath: config.yaml
-            readOnly: true

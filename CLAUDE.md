@@ -84,13 +84,25 @@ kubernetes/apps/
 
 **Prefer OCI over HTTPS for Helm chart sources.** Use `OCIRepository` (with `chartRef` in the HelmRelease) instead of `HelmRepository` when the chart is available as an OCI artifact. Check the chart's GitHub/docs for an OCI URL before falling back to an HTTPS repo.
 
-**Every `ks.yaml` that deploys a HelmRelease must include a `healthChecks` entry** referencing that HelmRelease. This ensures the Kustomization only reports ready once the Helm deployment itself is healthy, not just once the manifests are applied:
+**Every `ks.yaml` must include a `healthChecks` entry for every significant resource it manages** — not just HelmReleases. Include OCIRepositories, ExternalSecrets, ClusterSecretStores, and any other resource whose readiness is meaningful. This ensures the Kustomization only reports ready once all managed resources are actually healthy:
 
 ```yaml
 healthChecks:
   - apiVersion: helm.toolkit.fluxcd.io/v2
     kind: HelmRelease
     name: <app-name>
+    namespace: <namespace>
+  - apiVersion: source.toolkit.fluxcd.io/v1
+    kind: OCIRepository
+    name: <app-name>
+    namespace: <namespace>
+  - apiVersion: external-secrets.io/v1
+    kind: ExternalSecret
+    name: <secret-name>
+    namespace: <namespace>
+  - apiVersion: external-secrets.io/v1
+    kind: ClusterSecretStore
+    name: <store-name>
     namespace: <namespace>
 ```
 

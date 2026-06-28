@@ -22,3 +22,11 @@ spec:
       kind: HelmRelease
       name: cloudflare-ddns
       namespace: network
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: OCIRepository
+      name: app-template
+      namespace: network
+    - apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      name: cloudflare-ddns-token
+      namespace: network
