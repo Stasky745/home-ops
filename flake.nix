@@ -18,6 +18,7 @@
             sops
             age
             claude-code
+            tcpdump
           ];
         };
       });

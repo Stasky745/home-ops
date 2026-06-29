@@ -20,20 +20,6 @@ spec:
         annotations:
           io.cilium/lb-ipam-ips: "192.168.42.100"
 ---
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: EnvoyProxy
-metadata:
-  name: external
-  namespace: network
-spec:
-  provider:
-    type: Kubernetes
-    kubernetes:
-      envoyService:
-        externalTrafficPolicy: Cluster
-        annotations:
-          io.cilium/lb-ipam-ips: "192.168.42.101"
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -64,13 +50,25 @@ spec:
         namespaces:
           from: All
 ---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: external
+  namespace: network
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        externalTrafficPolicy: Cluster
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.42.101"
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: external
   namespace: network
-  annotations:
-    external-dns.alpha.kubernetes.io/target: ipv4.stasky.win
 spec:
   gatewayClassName: envoy
   infrastructure:
@@ -82,16 +80,6 @@ spec:
     - name: http
       protocol: HTTP
       port: 80
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https
-      protocol: HTTPS
-      port: 443
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: stasky-win-wildcard-tls
       allowedRoutes:
         namespaces:
           from: All

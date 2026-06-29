@@ -112,6 +112,8 @@ Secrets flow through two layers:
 
 **There is no `cluster-settings` ConfigMap.** The previous pattern of substituting variables from a ConfigMap was removed. The only variable substitution in the cluster is `cert-manager-config`, which reads `ACME_EMAIL` from the `cluster-settings` **Secret** (created by an ExternalSecret in `cert-manager/cert-manager/secrets/`).
 
+**Prefer env vars over ConfigMaps for runtime values.** When an app needs a value from 1Password, the ExternalSecret should create a Secret whose keys match the env var names the app expects. The HelmRelease then injects them via `env[].valueFrom.secretKeyRef`. ConfigMaps are for truly static, non-sensitive config (e.g. routing rules, feature flags) that contain no IDs, tokens, or environment-specific values. Never put credentials, UUIDs, or tokens in a ConfigMap.
+
 ---
 
 ## Talos Operations
@@ -477,6 +479,8 @@ includes:
 ```
 
 Tasks must not hardcode IPs, hostnames, or cluster-specific values. Use dotenv-loaded variables or task inputs instead.
+
+> **Note:** `dotenv` (`talos/nodes.env`, `kubernetes/cluster.env`) was moved to the monorepo root `Taskfile.yaml` so tasks can be run from there without `cd`-ing in. Running `task` directly from `homeops/` will not auto-load those files — use `task homeops:<name>` from the repo root instead.
 
 ### Key tasks reference
 
