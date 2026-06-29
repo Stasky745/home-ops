@@ -17,6 +17,7 @@
             fluxcd
             sops
             age
+            yq-go
             claude-code
             tcpdump
           ];

@@ -1,4 +1,4 @@
 ingress:
-  - hostname: "*.stasky.win"
+  - hostname: flux-webhook.stasky.win
     service: http://192.168.42.101
   - service: http_status:404

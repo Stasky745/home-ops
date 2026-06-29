@@ -11,3 +11,10 @@ tasks:
       - nix profile add /workspace#
       - direnv allow /workspace
       - cp /root/.claude/backups/.claude.json.backup.1782489431743 /root/.claude.json
+
+  cloudflared:dns-bootstrap:
+    desc: "Create Cloudflare Tunnel DNS routes for all hostnames in cloudflared config.yaml (idempotent)"
+    cmds:
+      - |
+        yq '.ingress[].hostname | select(. != null)' kubernetes/apps/network/cloudflared/app/configs/config.yaml | \
+          xargs -I{} cloudflared tunnel route dns homeops {}
